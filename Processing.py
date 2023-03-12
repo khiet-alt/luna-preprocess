@@ -12,6 +12,8 @@ SAVE_FOLDER_lung_mask = '1_1_1mm_slices_lung_masks'
 SAVE_FOLDER_nodule_mask = '1_1_1mm_slices_nodule'
 
 
+data_dir = "../../luna16"
+
 def seq(start, stop, step=1):
     n = int(round((stop - start)/float(step)))
     if n > 1:
@@ -56,27 +58,27 @@ def draw_circles(image,cands,origin,spacing):
     return image_mask
 
 
-def getUids(subset, cads):
-    # imagesWithNodules = []
-    uids = []
-    subsetDir = '../luna16/LUNA16/subset{}'.format(subset) 	
-    imagePaths = glob.glob("{}/*.mhd".format(subsetDir))
-    print(len(imagePaths))
-    for imagePath in imagePaths:
-        imageName = os.path.split(imagePath)[1].replace('.mhd','')
-        uids.append(imageName)
-        # if len(cads[cads['seriesuid'] == imageName].index.tolist()) != 0: #dit moet efficienter kunnen!
-            # imagesWithNodules.append(imagePath)    
-    # return imagesWithNodules
-    return uids
+# def getUids(subset, cads):
+#     # imagesWithNodules = []
+#     uids = []
+#     subsetDir = '../luna16/LUNA16/subset{}'.format(subset) 	
+#     imagePaths = glob.glob("{}/*.mhd".format(subsetDir))
+#     print(len(imagePaths))
+#     for imagePath in imagePaths:
+#         imageName = os.path.split(imagePath)[1].replace('.mhd','')
+#         uids.append(imageName)
+#         # if len(cads[cads['seriesuid'] == imageName].index.tolist()) != 0: #dit moet efficienter kunnen!
+#             # imagesWithNodules.append(imagePath)    
+#     # return imagesWithNodules
+#     return uids
 
 def createMask(i):
-    luna_paths = glob.glob(f"../luna16/LUNA16/subset{i}/*.mhd")
-    mask_path = f"../luna16/MASK/subset{i}/"
+    luna_paths = glob.glob(data_dir + f"/subset{i}/*.mhd")[:6]
+    mask_path = data_dir + f"/mask/subset{i}/"
     cads = pd.read_csv("annotations.csv")
 
-    if not os.path.exists(mask_path):
-        os.makedirs(mask_path)
+    # if not os.path.exists(mask_path):
+    #     os.makedirs(mask_path)
 
     for f in tqdm(luna_paths):
         img, origin, spacing = load_itk(f)
@@ -91,9 +93,4 @@ def createMask(i):
 
 
 if __name__ == "__main__":
-    # cads = pd.read_csv("annotations.csv")
-    
-    # for i in tqdm(range(10), desc="Subset"):
-        # uids = getUids(i, cads)
-
-    createMask(8)
+    createMask(5)
